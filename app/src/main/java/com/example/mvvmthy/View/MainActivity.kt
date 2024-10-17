@@ -2,9 +2,12 @@ package com.example.mvvmthy.View
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mvvmthy.base.MyApplication
 import com.example.mvvmthy.Adapters.ProductAdapter
 import com.example.mvvmthy.R
 import com.example.mvvmthy.ViewModel.ProductViewModel
@@ -22,6 +25,8 @@ class MainActivity : AppCompatActivity() {
         setupViews()
         listener()
 
+        val appName = (application as MyApplication).getAppName()
+        Log.d("appName",appName)
 
     }
 
@@ -36,7 +41,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun listener() {
         viewModel.products.observe(this) { products ->
-            adapter.submitList(products)
+            if (products != null) {
+                adapter.submitList(products)
+            } else {
+                MyApplication.instance?.error?.let { Log.d("error", it) }
+                Toast.makeText(this, MyApplication.instance?.name, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
